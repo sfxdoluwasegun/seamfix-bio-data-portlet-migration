@@ -1,0 +1,341 @@
+<div xmlns:th="http://www.thymeleaf.org"
+>
+
+    <script type="text/javascript" th:inline="javascript">
+        var resourceURL = [[${resourceURL}]];
+        var detailURL = [[${detailURL}]];
+        var printsURL = [[${printsURL}]];
+        var imageURL = [[${imageURL}]];
+    </script>
+
+
+    <div id="angularApp" class="container">
+        <h2 th:text="#{welcome}"></h2>
+        <hr/>
+        <pre class="h4" th:text="#{search_label}">Search info</pre>
+        <div ng-controller="demographicController as demographicCtrl" class="panel">
+            <div class="panel-body">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label class="sr-only" for="search">Search</label>
+                        <input type="search" ng-model="query" class="form-control" id="search" placeholder="Search..."
+                               ng-change="search()"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="sr-only" for="size">Size</label>
+                        <input type="number" class="form-control" id="size" ng-model="data.numOfDemographics"
+                               ng-change="updateView();" placeholder="Size"
+                               min="1" max="100"/>
+                    </div>
+
+                    <!--<button type="submit" class="btn btn-default">Sign in</button>-->
+                </form>
+            </div>
+
+            <div id="center-content-area" ng-if="data.totalItems > 0" ng-hide="showTable" class="panel-body">
+                <table class="table  table-hover data-table sort display">
+                    <thead>
+                    <tr>
+                        <th class="name"><a href="" ng-click="columnToOrder='firstName';reverse=!reverse"
+                                            th:text="#{name}"/></th>
+                        <th class="phone_number"><a href="" ng-click="columnToOrder='phoneNumber';reverse=!reverse"
+                                                    th:text="#{phone_number}"/></th>
+                        <th class="serial_number"><a href="" ng-click="columnToOrder='msisdnSerial';reverse=!reverse"
+                                                     th:text="#{msisdn_serial}"/></th>
+                        <th class="unique_id"><a href="" ng-click="columnToOrder='uniqueId';reverse=!reverse"
+                                                 th:text="#{unique_id}"/></th>
+                        <th class="reg_date"><a href="" ng-click="columnToOrder='registrationDate';reverse=!reverse"
+                                                th:text="#{reg_date}"/></th>
+                        <th class="actions"><a href="" ng-click="columnToOrder='Action';reverse=!reverse"
+                                               th:text="#{actions}"/></th>
+
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in data.viewDemographics" ng-click="showDetails(item.id)">
+                        <td>{{item.firstName}} {{item.otherName}} {{item.surname}}</td>
+                        <td>{{item.phoneNumber}}</td>
+                        <td>{{item.msisdnSerial}}</td>
+                        <td>{{item.uniqueId}}</td>
+                        <td>{{item.receiptTimeStamp | date:'EEE, d MMM yyyy'}}</td>
+                        <td>
+                            <a ng-click="showDetails(item.id)" href="javascript:">
+                                <button class="btn btn-info btn-xs"><i class="fa fa-external-link"> </i> Details
+                                </button>
+                            </a>
+                        </td>
+
+                    </tr>
+                    </tbody>
+                </table>
+                <uib-pagination total-items="data.totalItems" ng-model="data.currentPage" max-size="data.maxSize"
+                                class="pagination-sm"
+                                boundary-links="true"
+                                num-pages="data.numOfPages"
+                                ng-change="updateView()"></uib-pagination>
+            </div>
+            <div id="detail-panel" class="panel" ng-if="demographic !=null">
+
+                <div id="details" class="panel-body">
+                    <div class="row">
+                        <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="center-block">
+                                <img class="img-responsive img-rounded"
+                                     src="data:image/jpeg;base64,{{demographicImage}}" alt="no image"
+                                     title="this image needs to be centered"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#bio_data" aria-controls="bio_data"
+                                                                          role="tab" data-toggle="tab"
+                                                                          th:text="#{basic_data}"/></li>
+                                <li role="presentation"><a href="#contact_detail" aria-controls="contact_detail"
+                                                           role="tab" data-toggle="tab" th:text="#{contact_detail}"/>
+                                </li>
+                                <li role="presentation"><a href="#dynamic_data" aria-controls="dynamic_data" role="tab"
+                                                           data-toggle="tab" th:text="#{dynamic_data}"/></li>
+                                <li role="presentation"><a href="#msisdn_detail" aria-controls="msisdn_detail"
+                                                           role="tab" data-toggle="tab" th:text="#{msisdn_detail}"/>
+                                </li>
+                                <li role="presentation"><a href="#passport_detail" aria-controls="passport_detail"
+                                                           role="tab" data-toggle="tab" th:text="#{passport_detail}"/>
+                                </li>
+                                <li role="presentation"><a href="#company_detail" aria-controls="company_detail"
+                                                           role="tab" data-toggle="tab" th:text="#{company_detail}"/>
+                                </li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="panel tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="bio_data">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{first_name}"/>
+                                            <td>{{demographic.firstName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{surname}"/>
+                                            <td>{{demographic.surname}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{other_name}"/>
+                                            <td>{{demographic.otherName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{mothers_maiden_name}"/>
+                                            <td>{{demographic.mothersMaidenName }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{gender}"/>
+                                            <td>{{demographic.gender}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{birthday}"/>
+                                            <td>{{demographic.birthday | date:'EEE, d MMM yyyy'}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{occupation}"/>
+                                            <td>{{demographic.occupation}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="contact_detail">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{email}"/>
+                                            <td>{{demographic.email}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{postal_code}"/>
+                                            <td>{{demographic.postalCode}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{nationality}"/>
+                                            <td>{{demographic.nationality}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{resident}"/>
+                                            <td>{{demographic.resident}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{resident_area}"/>
+                                            <td>{{demographic.dda2}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{state_of_origin}"/>
+                                            <td>{{demographic.stateOfOrigin}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{residential_address}"/>
+                                            <td>{{demographic.residentialAddress }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{residential_lga}"/>
+                                            <td>{{demographic.residentialAddressLGA}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{residential_state}"/>
+                                            <td>{{demographic.residentialAddressState}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{special_data_captured}"/>
+                                            <td>{{demographic.dda20}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="dynamic_data">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{unique_id}"/>
+                                            <td>{{demographic.uniqueId}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{override_reason}"/>
+                                            <td>{{demographic.dda3}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{primary_unique_id}"/>
+                                            <td>{{demographic.dda1}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{selected_override_reason}"/>
+                                            <td>{{demographic.dda20}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{client_id}"/>
+                                            <td>{{demographic.clientId}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{agility_status}"/>
+                                            <td>{{demographic.confirmationStatus}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="msisdn_detail">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{subscriber_type}"/>
+                                            <td>{{demographic.subscriberType}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{registration_type}"/>
+                                            <td>{{demographic.registrationType}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{msisdn_serial}"/>
+                                            <td>{{demographic.msisdnSerial}}</td>
+                                        </tr>
+
+                                        <tr>
+                                            <td th:text="#{phone_number}"/>
+                                            <td>{{demographic.phoneNumber}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{registration_lga}"/>
+                                            <td>{{demographic.registrationLGA}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{reg_date}"/>
+                                            <td>{{demographic.receiptTimeStamp | date:'EEE, d MMM yyyy HH:mm:ss Z'}}
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane " id="passport_detail">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{passport_expiry_date}"/>
+                                            <td>{{demographic.expiryDate}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{country_issued_date}"/>
+                                            <td>{{demographic.countryIssued}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{passport_number}"/>
+                                            <td>{{demographic.passportNumber}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{passport_image_override_reason}"/>
+                                            <td>{{demographic.dda20}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div role="tabpanel" class="tab-pane " id="company_detail">
+                                    <table class="table table-condensed panel-body">
+                                        <tbody>
+                                        <tr>
+                                            <td th:text="#{company_id}"/>
+                                            <td>{{demographic.companyId}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{company_name}"/>
+                                            <td>{{demographic.companyName}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{company_address}"/>
+                                            <td>{{demographic.companyAddress }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{company_address_lga}"/>
+                                            <td>{{demographic.companyAddressLGA}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{company_address_state}"/>
+                                            <td>{{demographic.companyAddressState}}</td>
+                                        </tr>
+                                        <tr>
+                                            <td th:text="#{company_postal_code}"/>
+                                            <td>{{demographic.companyAddressPostalCode}}</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div ng-repeat="print in demographicPrints">
+                                    <div class="col-xs-3 col-md-3 col-lg-3">
+
+                                        <div class="col-sm-12 thumbnail text-center">
+                                            <img class="img-responsive img-thumbnail"
+                                                 src="data:image/jpeg;base64,{{print.data}}"
+                                                 alt="no image" title="print"/>
+                                            <div class="caption">
+                                                <h4>{{print.type}}</h4>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info" ng-click="setPage(data.currentPage)"
+                        th:text="#{back_button}">Back to List
+                </button>
+            </div>
+        </div>
+        <!-- Ends Controller -->
+    </div>
+
+</div>

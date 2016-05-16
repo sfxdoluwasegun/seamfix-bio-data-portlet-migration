@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<portlet-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+             version="2.0">
+
+    <portlet>
+        <portlet-name>biodata-portlet</portlet-name>
+        <display-name>BioData Portlet</display-name>
+        <portlet-class>org.springframework.web.portlet.DispatcherPortlet</portlet-class>
+
+
+        <init-param>
+            <name>contextClass</name>
+            <value>com.sf.kycmanager.core.base.context.AnnotationConfigurationPortletContext
+            </value>
+        </init-param>
+        <init-param>
+            <name>contextConfigLocation</name>
+            <value>com.sf.kycmanager.portlet.config.PortletConfig</value>
+        </init-param>
+        <init-param>
+            <name>config-template</name>
+            <value>/jsp/configuration.jsp</value>
+        </init-param>
+
+        <expiration-cache>0</expiration-cache>
+
+        <supports>
+            <mime-type>text/html</mime-type>
+            <portlet-mode>view</portlet-mode>
+        </supports>
+
+        <resource-bundle>content/language_template</resource-bundle>
+
+        <portlet-info>
+            <title>BioData Portlet</title>
+            <short-title>Kyc</short-title>
+            <keywords>Kyc Manager</keywords>
+        </portlet-info>
+
+    </portlet>
+
+</portlet-app>
